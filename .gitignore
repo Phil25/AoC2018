@@ -1,0 +1,12 @@
+# Ignore all
+*
+
+# Unignore files with extensions
+!*.*
+
+# Unignore directories
+!*/
+
+# Ignore compilation stuff
+*.hi
+*.o
