@@ -1,6 +1,6 @@
 # Advent of Code 2018 Tasks
 
-My attemts at tackling this year's Advent of Code tasks, in order to learn Haskell on more practical examples.
+My attempts at tackling this year's Advent of Code tasks, in order to learn Haskell on more practical examples.
 
 Each directory in this repository corresponds to a day, and each such directory has `Main.hs` containing the source code and `data.txt` containing my given data set.
 
