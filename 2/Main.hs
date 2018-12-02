@@ -1,4 +1,5 @@
 import           System.Environment
+import           Data.List
 import qualified Data.Map as Map
 
 --- Part One ---
@@ -21,7 +22,7 @@ getChecksum contents = ex2 * ex3
 
 --- Part Two ---
 getDiff :: String -> String -> Int
-getDiff (x:[]) (y:_)  = 0
+getDiff (x:[]) (y:_) = 0
 getDiff (x:xs) (y:ys)
     | x /= y    = getDiff xs ys + 1
     | otherwise = getDiff xs ys
@@ -37,8 +38,8 @@ main = do
     args    <- getArgs
     content <- readFile (args !! 0)
     let testset = lines content
-        product = [(x,y) | x <- testset, y <- testset]
-        result  = getOneCharDiff $ product
+        combs   = [(x,y) | (x:rest) <- tails testset, y <- rest] -- combinations w/o repetitions
+        result  = getOneCharDiff $ combs
     print $ getChecksum testset
     print $ fst result
     print $ snd result
