@@ -1,5 +1,8 @@
 #!/bin/bash
-rm "$1"/Main
+EXT=`dirname "$1"`
+FILENAME=`basename -- "$1"`
+FILENAME="${FILENAME%.*}"
+rm $EXT/$FILENAME
 
-../compile.sh "$1" Main.hs
-"$1"/Main data.txt
+./compile.sh "$1" $FILENAME $EXT
+./bin/$FILENAME ./data/$FILENAME.txt
