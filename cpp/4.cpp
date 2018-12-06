@@ -129,36 +129,57 @@ int getSleepmostGuard(std::map<int, std::vector<std::vector<int>*>>& sleepMinute
 }
 
 int getSleepmostMinute(int guard, std::map<int, std::vector<std::vector<int>*>>& sleepMinutes){
-	int minutesCount[60]{0};
+	int count[60]{0};
 	std::vector<std::vector<int>*> guardMinutes = sleepMinutes.at(guard);
 
 	for(auto const& minuteVec : guardMinutes)
 		for(auto const& minute : *minuteVec)
-			minutesCount[minute]++;
+			count[minute]++;
 
-	int sleepmostMinute = 0;
-	for(int i = 0; i < 60; ++i){
-		if(minutesCount[i] < minutesCount[sleepmostMinute])
-			continue;
-		sleepmostMinute = i;
-	}
-
-	return sleepmostMinute;
+	int m = 0, i = 0;
+	while(m = count[i] > count[m] ? i : m, ++i < 60);
+	return m;
 }
 
-void part1(std::string data){
-	std::map<int, event*> events = std::map<int, event*>();
-	getEvents(data, events);
-
+void part1(const std::map<int, event*>& events){
 	std::map<int, std::vector<std::vector<int>*>> sleepMinutes;
 	getSleepMinutes(sleepMinutes, events);
 
 	int guard = getSleepmostGuard(sleepMinutes);
-	std::cout << "Sleepmost guard: " << guard << std::endl;
-
 	int minute = getSleepmostMinute(guard, sleepMinutes);
-	std::cout << "Sleepmost minute: " << minute << std::endl;
-	std::cout << "Result: " << guard * minute << std::endl;
+
+	std::cout << guard * minute << std::endl;
+}
+
+void getSleepPerMinute(std::map<int, std::array<int, 60>>& sleepPerMinute, const std::map<int, std::vector<std::vector<int>*>>& sleepMinutes){
+	for(auto const& sleep : sleepMinutes){
+		std::array<int, 60> minutes{0};
+		for(auto const& interval : sleep.second)
+			for(auto const& m : *interval)
+				minutes[m]++;
+		sleepPerMinute.emplace(sleep.first, minutes);
+	}
+}
+
+void part2(const std::map<int, event*>& events){
+	std::map<int, std::vector<std::vector<int>*>> sleepMinutes;
+	getSleepMinutes(sleepMinutes, events);
+
+	std::map<int, std::array<int, 60>> sleepPerMinute;
+	getSleepPerMinute(sleepPerMinute, sleepMinutes);
+
+	int minute = 0, minuteFreq = 0, guard = -1;
+	for(auto const& guardSleepMinute : sleepPerMinute){
+		for(int i = 0; i < 60; ++i){
+			if(guardSleepMinute.second[i] <= minuteFreq)
+				continue;
+			minute = i;
+			minuteFreq = guardSleepMinute.second[i];
+			guard = guardSleepMinute.first;
+		}
+	}
+
+	std::cout << guard * minute << std::endl;
 }
 
 int main(int argc, char* argv[]){
@@ -167,6 +188,11 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 
-	part1(argv[1]);
+	std::map<int, event*> events = std::map<int, event*>();
+	getEvents(argv[1], events);
+
+	part1(events);
+	part2(events);
+
 	return 0;
 }
