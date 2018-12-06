@@ -17,8 +17,19 @@ react = foldr step ""
             | reactable x a = as
         step x as           = x : as
 
+--- Part Two ---
+withRemoved :: String -> Char -> Int
+withRemoved xs c = length (react xsNoC) -1
+    where xsNoC  = [x | x <- xs, not $ x `elem` [c, toUpper c]]
+
+getSmallest :: Int -> String -> Int
+getSmallest init xs = foldl step init ['a'..'z']
+    where step n c = min n $ xs `withRemoved` c
+
 main :: IO ()
 main = do
     args    <- getArgs
     content <- readFile (args !! 0)
-    print $ length (react content) -1
+    let len = length (react content) -1
+    print $ len
+    print $ getSmallest len content
