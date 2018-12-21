@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <array>
+#include <list>
 
 struct pot;
 struct rule;
@@ -42,7 +43,7 @@ struct pot{
 	bool getLeft(int off){
 		if(!off) return plant;
 		if(!prev){
-			if(plant){
+			if(plant){ // if plant is present, add 2 empty pots to left
 				pot* left = this->insertFront(new pot(number -1, false));
 				left->insertFront(new pot(number -2, false));
 			}
@@ -54,7 +55,7 @@ struct pot{
 	bool getRight(int off){
 		if(!off) return plant;
 		if(!next){
-			if(plant){
+			if(plant){ // if plant is present, add 2 empty pots to right
 				pot* right = this->insertEnd(new pot(number +1, false));
 				right->insertEnd(new pot(number +2, false));
 			}
@@ -66,6 +67,11 @@ struct pot{
 	int sumNums() const{
 		if(!next) return plant ? number : 0;
 		return next->sumNums() + (plant ? number : 0);
+	}
+
+	int sumPlants() const{
+		if(!next) return plant ? 1 : 0;
+		return next->sumPlants() + (plant ? 1 : 0);
 	}
 
 	void print() const{
@@ -148,10 +154,19 @@ void solve(std::ifstream& contents){
 	std::vector<rule*> rv;
 	parseRules(contents, rv);
 
-	for(int i = 1; i <= 20; ++i)
+	// part 1
+	int i = 1;
+	for(; i <= 20; ++i)
 		root = evolve(root, rv);
 
 	std::cout << root->sumNums() << std::endl;
+
+	// part 2
+	for(; i <= 200; ++i)
+		root = evolve(root, rv);
+
+	// count increases linearly (by how many plants there are) after large generation
+	std::cout << (50000000000-200) *root->sumPlants() +root->sumNums() << std::endl;
 }
 
 int main(int argc, char* argv[]){
